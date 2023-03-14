@@ -1,8 +1,9 @@
 package com.example.csrex.user.controller;
 
+import com.example.csrex.user.dto.request.SignInRequestDTO;
 import com.example.csrex.user.dto.request.SignUpRequestDTO;
-import com.example.csrex.user.dto.response.ResponseDTO;
-import com.example.csrex.user.dto.response.ResponseErrorDTO;
+import com.example.csrex.user.dto.response.NameResponseDTO;
+import com.example.csrex.user.dto.response.SingleResult;
 import com.example.csrex.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -19,19 +20,24 @@ public class MainController {
     final private UserService userService;
 
     @GetMapping
-    public String signIn(@RequestBody SignUpRequestDTO dto) {
-        log.info("api get.....................................");
-        return dto.getName();
+    public ResponseEntity login(@RequestBody SignInRequestDTO dto) {
+        try {
+            NameResponseDTO response = userService.signIn(dto);
+            return new ResponseEntity<>(response, HttpStatus.OK) ;
+        } catch (Exception e) {
+            SingleResult<String> error = new SingleResult<>(e.getMessage());
+            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PostMapping
-    public ResponseEntity signUp(@RequestBody SignUpRequestDTO dto) {
+    public ResponseEntity join(@RequestBody SignUpRequestDTO dto) {
         try {
-            ResponseDTO response = ResponseDTO.builder().name(userService.register(dto)).build();
+            NameResponseDTO response = userService.signUp(dto);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch(Exception e) {
-            ResponseErrorDTO error = ResponseErrorDTO.builder().msg(e.getMessage()).build();
-            return new ResponseEntity<>(error, HttpStatus.BAD_GATEWAY);
+            SingleResult<String> error = new SingleResult<>(e.getMessage());
+            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
         }
     }
 }

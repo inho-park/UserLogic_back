@@ -1,10 +1,10 @@
 package com.example.csrex.user.dto.response;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-@Builder
-public class ResponseDTO {
+@AllArgsConstructor
+public class NameResponseDTO {
     private String name;
 }
